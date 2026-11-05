@@ -1,0 +1,5 @@
+1. eshte bere nje databaze e re ne phpadmin me emrin "mms".
+2. mms.sql eshte bere import ne databzen mms ne phpmyadmin.
+3. rregullimi i rreshtit ne login.php <p>Already have an account:<a href="index.php" >Sign up</a> </p> ne -> <p>Dont have an account? <a href="index.php" >Sign up</a> </p>
+4. berja e vetes admin ne phpmyadmin
+5.
