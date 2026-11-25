@@ -10,6 +10,12 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "admin") {
     exit();
 }
 
+// Numri i rezervimeve ne pritje
+$pending_bookings = $conn->query("
+    SELECT COUNT(*) FROM bookings
+    WHERE status = 'pending'
+")->fetchColumn();
+
 // Vlera totale e rezervimeve te aprovuara
 $total_revenue = $conn->query("
     SELECT COALESCE(SUM(total_price), 0)
@@ -80,6 +86,19 @@ $full_name = htmlspecialchars($_SESSION["full_name"]);
 
         <a href="bookings.php" class="sidebar-link">
             Manage Bookings
+
+            <?php if ($pending_bookings > 0): ?>
+                <span style="
+                    background: #e74c3c;
+                    color: white;
+                    padding: 3px 8px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    margin-left: 8px;
+                ">
+                    <?php echo $pending_bookings; ?>
+                </span>
+            <?php endif; ?>
         </a>
 
         <a href="users.php" class="sidebar-link">

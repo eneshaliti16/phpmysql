@@ -849,3 +849,442 @@ footer {
     color: #777;
     font-weight: bold;
 }
+
+
+
+/* ========================================
+   CAR RENTAL SYSTEM - MODERN BLUE DESIGN
+======================================== */
+
+:root {
+    --primary: #1769ff;
+    --primary-dark: #1054d1;
+    --navy: #101827;
+    --mint: #00c9a7;
+    --background: #f4f7fc;
+    --white: #ffffff;
+    --text: #172033;
+    --muted: #718096;
+    --border: #e2e8f0;
+}
+
+/* GENERAL */
+
+body {
+    background: var(--background);
+    color: var(--text);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* HEADER */
+
+header {
+    background: var(--navy);
+    padding: 20px 8%;
+    box-shadow: 0 4px 20px rgba(16, 24, 39, 0.15);
+}
+
+.logo span {
+    color: var(--mint);
+}
+
+nav a {
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: var(--mint);
+}
+
+/* BUTTONS */
+
+.btn {
+    background: linear-gradient(135deg, #1769ff, #4388ff);
+    border: none;
+    border-radius: 9px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(23, 105, 255, 0.20);
+    transition: 0.3s ease;
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(23, 105, 255, 0.30);
+}
+
+/* HERO */
+
+.hero {
+    background-image:
+        linear-gradient(
+            rgba(16, 24, 39, 0.72),
+            rgba(16, 24, 39, 0.82)
+        ),
+        url("https://images.unsplash.com/photo-1492144534655-ae79c964c9d7");
+    background-position: center;
+    background-size: cover;
+}
+
+.hero h1 span {
+    color: var(--mint);
+}
+
+.hero p {
+    color: #e2e8f0;
+}
+
+/* SECTION TITLES */
+
+.section-title {
+    color: var(--navy);
+    font-weight: bold;
+}
+
+.section-description {
+    color: var(--muted);
+}
+
+/* CAR CARDS */
+
+.cars-container {
+    gap: 28px;
+}
+
+.car-card {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(16, 24, 39, 0.07);
+    border: 1px solid #edf0f5;
+    transition: 0.3s ease;
+}
+
+.car-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 14px 30px rgba(23, 105, 255, 0.13);
+}
+
+.car-card img {
+    transition: 0.4s;
+}
+
+.car-card:hover img {
+    transform: scale(1.03);
+}
+
+.car-info h3 {
+    color: var(--navy);
+}
+
+.car-info p {
+    color: var(--muted);
+}
+
+.price {
+    color: var(--primary);
+}
+
+/* SEARCH AND FILTER FORM */
+
+.cars-section .car-form {
+    margin: 25px auto 40px;
+    padding: 25px;
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 5px 20px rgba(16, 24, 39, 0.05);
+    text-align: left;
+}
+
+.car-form input,
+.car-form select,
+.car-form textarea {
+    background: #fbfcff;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    transition: 0.2s;
+}
+
+.car-form input:focus,
+.car-form select:focus,
+.car-form textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(23, 105, 255, 0.10);
+}
+
+/* ABOUT */
+
+.about {
+    background: linear-gradient(135deg, #101827, #1b3152);
+}
+
+.about .section-title {
+    color: white;
+}
+
+.about p {
+    color: #d4deec;
+}
+
+/* FOOTER */
+
+footer {
+    background: #0a1020;
+    color: #dbeafe;
+}
+
+/* LOGIN AND REGISTER */
+
+.auth-container {
+    background: var(--background);
+}
+
+.auth-box {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 10px 35px rgba(16, 24, 39, 0.08);
+}
+
+.auth-box h2 {
+    color: var(--navy);
+}
+
+.auth-box input {
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.auth-box input:focus {
+    border-color: var(--primary);
+}
+
+.auth-button {
+    background: var(--primary);
+    border-radius: 9px;
+    transition: 0.3s;
+}
+
+.auth-button:hover {
+    background: var(--primary-dark);
+}
+
+.auth-link a {
+    color: var(--primary);
+}
+
+/* ADMIN SIDEBAR */
+
+.admin-sidebar {
+    background: linear-gradient(180deg, #101827, #172b49);
+}
+
+.admin-logo span {
+    color: var(--mint);
+}
+
+.sidebar-link {
+    border-radius: 9px;
+    transition: 0.25s;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+    background: var(--primary);
+    box-shadow: 0 4px 12px rgba(23, 105, 255, 0.20);
+}
+
+/* ADMIN CONTENT */
+
+.admin-main {
+    background: var(--background);
+}
+
+.admin-topbar h1,
+.section-heading {
+    color: var(--navy);
+}
+
+.profile-circle {
+    background: linear-gradient(135deg, var(--primary), #4388ff);
+}
+
+/* WELCOME CARD */
+
+.welcome-card {
+    background: linear-gradient(120deg, #1555d9, #1769ff, #00a9b5);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(23, 105, 255, 0.18);
+}
+
+/* STATISTICS CARDS */
+
+.stat-card {
+    border: 1px solid #edf0f5;
+    border-radius: 14px;
+    transition: 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(23, 105, 255, 0.10);
+}
+
+.stat-card h2 {
+    color: var(--primary);
+}
+
+/* ADMIN INFORMATION */
+
+.admin-info {
+    border: 1px solid #edf0f5;
+    border-radius: 14px;
+}
+
+/* TABLES */
+
+.cars-table,
+.bookings-table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.cars-table th,
+.bookings-table th {
+    background: #172b49;
+    color: white;
+}
+
+.cars-table td,
+.bookings-table td {
+    border-bottom: 1px solid var(--border);
+}
+
+.cars-table tbody tr:hover,
+.bookings-table tbody tr:hover {
+    background: #eff6ff;
+}
+
+/* ACTION BUTTONS */
+
+.edit-btn {
+    background: var(--primary);
+    border-radius: 7px;
+}
+
+.edit-btn:hover {
+    background: var(--primary-dark);
+}
+
+.delete-btn {
+    border-radius: 7px;
+}
+
+/* STATUS BADGES */
+
+.status-approved {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-rejected {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-cancelled {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+/* MY BOOKINGS */
+
+.bookings-title {
+    color: var(--navy);
+}
+
+.bookings-table-wrapper {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+}
+
+.cancel-btn {
+    border-radius: 8px;
+}
+
+.cancel-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 900px) {
+
+    .cars-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .admin-main {
+        padding: 25px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    header {
+        padding: 20px;
+    }
+
+    nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    nav a {
+        margin: 3px;
+    }
+
+    .hero {
+        min-height: 420px;
+        padding: 40px 6%;
+    }
+
+    .hero h1 {
+        font-size: 34px;
+    }
+
+    .cars-section {
+        padding: 45px 5%;
+    }
+
+    .cars-container {
+        grid-template-columns: 1fr;
+    }
+
+    .cars-section .car-form {
+        padding: 18px;
+    }
+
+    .admin-main {
+        padding: 18px;
+    }
+
+    .welcome-card {
+        padding: 22px;
+    }
+
+    .welcome-icon {
+        font-size: 42px;
+    }
+
+}

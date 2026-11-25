@@ -2,26 +2,68 @@
 <?php
 require_once "includes/config.php";
 
-// Marrim vlerat nga formulari i kerkimit
+// Marrja e vlerave nga formulari
 $search = trim($_GET["search"] ?? "");
 $max_price = $_GET["max_price"] ?? "";
+$brand = $_GET["brand"] ?? "";
+$sort = $_GET["sort"] ?? "newest";
 
-// Ndertojme kerkesen SQL
+// Marrja e markave nga databaza
+$brand_stmt = $conn->query("
+    SELECT DISTINCT brand
+    FROM cars
+    WHERE status = 'available'
+    ORDER BY brand ASC
+");
+
+$brands = $brand_stmt->fetchAll(PDO::FETCH_COLUMN);
+
+// Ndertimi i SQL
 $sql = "SELECT * FROM cars WHERE status = 'available'";
 $params = [];
 
+// Kerkimi sipas markes ose modelit
 if ($search != "") {
     $sql .= " AND (brand LIKE ? OR model LIKE ?)";
     $params[] = "%" . $search . "%";
     $params[] = "%" . $search . "%";
 }
 
+// Filtrimi sipas markes
+if ($brand != "") {
+    $sql .= " AND brand = ?";
+    $params[] = $brand;
+}
+
+// Filtrimi sipas cmimit maksimal
 if ($max_price != "" && is_numeric($max_price) && $max_price > 0) {
     $sql .= " AND price_per_day <= ?";
     $params[] = (float) $max_price;
 }
 
-$sql .= " ORDER BY id DESC";
+// Renditja e veturave
+switch ($sort) {
+
+    case "price_low":
+        $sql .= " ORDER BY price_per_day ASC";
+        break;
+
+    case "price_high":
+        $sql .= " ORDER BY price_per_day DESC";
+        break;
+
+    case "year_new":
+        $sql .= " ORDER BY year DESC";
+        break;
+
+    case "year_old":
+        $sql .= " ORDER BY year ASC";
+        break;
+
+    default:
+        $sql .= " ORDER BY id DESC";
+        break;
+}
 
 $stmt = $conn->prepare($sql);
 $stmt->execute($params);
@@ -68,7 +110,7 @@ include "includes/header.php";
         Choose the perfect car for your next journey.
     </p>
 
-    <!-- SEARCH FORM -->
+    <!-- SEARCH AND FILTER FORM -->
 
     <form method="GET" action="index.php" class="car-form">
 
@@ -81,6 +123,25 @@ include "includes/header.php";
             value="<?php echo htmlspecialchars($search); ?>"
         >
 
+        <label>Choose Brand</label>
+
+        <select name="brand">
+
+            <option value="">All Brands</option>
+
+            <?php foreach ($brands as $b): ?>
+
+                <option
+                    value="<?php echo htmlspecialchars($b); ?>"
+                    <?php echo ($brand == $b) ? "selected" : ""; ?>
+                >
+                    <?php echo htmlspecialchars($b); ?>
+                </option>
+
+            <?php endforeach; ?>
+
+        </select>
+
         <label>Maximum Price Per Day (€)</label>
 
         <input
@@ -92,6 +153,32 @@ include "includes/header.php";
             value="<?php echo htmlspecialchars($max_price); ?>"
         >
 
+        <label>Sort Cars By</label>
+
+        <select name="sort">
+
+            <option value="newest" <?php echo ($sort == "newest") ? "selected" : ""; ?>>
+                Newest Added
+            </option>
+
+            <option value="price_low" <?php echo ($sort == "price_low") ? "selected" : ""; ?>>
+                Price: Low to High
+            </option>
+
+            <option value="price_high" <?php echo ($sort == "price_high") ? "selected" : ""; ?>>
+                Price: High to Low
+            </option>
+
+            <option value="year_new" <?php echo ($sort == "year_new") ? "selected" : ""; ?>>
+                Year: Newest First
+            </option>
+
+            <option value="year_old" <?php echo ($sort == "year_old") ? "selected" : ""; ?>>
+                Year: Oldest First
+            </option>
+
+        </select>
+
         <button type="submit" class="btn">
             Search Cars
         </button>
@@ -102,6 +189,8 @@ include "includes/header.php";
 
     </form>
 
+
+    <!-- CARS CONTAINER -->
 
     <div class="cars-container">
 

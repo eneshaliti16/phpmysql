@@ -10,6 +10,12 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "admin") {
     exit();
 }
 
+// Numri i rezervimeve ne pritje
+$pending_bookings = $conn->query("
+    SELECT COUNT(*) FROM bookings
+    WHERE status = 'pending'
+")->fetchColumn();
+
 // Marrja e perdoruesve nga databaza
 $sql = "SELECT id, full_name, username, email, role, created_at
         FROM users
@@ -52,12 +58,29 @@ $users = $stmt->fetchAll();
             Manage Cars
         </a>
 
-        <a href="bookings.php" class="sidebar-link">
+        <a href="bookings.php" class="sidebar-link active">
             Manage Bookings
+
+            <?php if ($pending_bookings > 0): ?>
+                <span style="
+                    background: #e74c3c;
+                    color: white;
+                    padding: 3px 8px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    margin-left: 8px;
+                ">
+                    <?php echo $pending_bookings; ?>
+                </span>
+            <?php endif; ?>
         </a>
 
         <a href="users.php" class="sidebar-link active">
             Manage Users
+        </a>
+
+        <a href="reports.php" class="sidebar-link">
+            Financial Reports
         </a>
 
         <div class="sidebar-bottom">
