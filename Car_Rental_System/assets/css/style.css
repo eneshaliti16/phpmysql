@@ -673,3 +673,179 @@ footer {
     width: 100%;
 }
 
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.status-cancelled {
+    background: #e2e3e5;
+    color: #383d41;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+
+/* MY BOOKINGS PAGE */
+
+.bookings-container {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+.bookings-title {
+    font-size: 32px;
+    margin-bottom: 8px;
+    color: #172033;
+}
+
+.bookings-subtitle {
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.bookings-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+
+.bookings-table th {
+    background: #172033;
+    color: white;
+    padding: 18px 15px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.bookings-table td {
+    padding: 18px 15px;
+    border-bottom: 1px solid #eee;
+    color: #444;
+}
+
+.bookings-table tbody tr:hover {
+    background: #f5f8ff;
+}
+
+.car-name {
+    font-weight: bold;
+    color: #172033 !important;
+}
+
+.price {
+    font-weight: bold;
+    color: #16834a !important;
+}
+
+/* STATUS COLORS */
+
+.status-pending,
+.status-approved,
+.status-rejected,
+.status-cancelled {
+    display: inline-block;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-cancelled {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.no-bookings {
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+}
+
+.cancel-btn {
+    display: inline-block;
+    background: #dc3545;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.cancel-btn:hover {
+    background: #a71d2a;
+}
+
+.no-action {
+    color: #999;
+    font-size: 12px;
+}
+
+.booking-message {
+    background: #e8f4fd;
+    color: #155b85;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+
+.car-image-placeholder {
+    width: 100%;
+    height: 200px;
+    background: #e9edf3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    font-weight: bold;
+}

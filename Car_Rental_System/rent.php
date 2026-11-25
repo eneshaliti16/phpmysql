@@ -31,8 +31,8 @@ if (!$car) {
 // Kur dergohet formulari
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $start_date = $_POST['start_date'];
-    $end_date = $_POST['end_date'];
+    $start_date = $_POST['start_date'] ?? "";
+    $end_date = $_POST['end_date'] ?? "";
 
     if (empty($start_date) || empty($end_date)) {
 
@@ -90,56 +90,114 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Header perfshihet vetem nje here
 include "includes/header.php";
 ?>
 
 <div class="container">
 
-    <h1>Rezervo veturen</h1>
+    <h1 class="section-title">Car Details</h1>
 
-    <h2>
-        <?php echo htmlspecialchars($car['brand'] . " " . $car['model']); ?>
-    </h2>
+    <div class="car-card" style="max-width:800px; margin:30px auto;">
 
-    <p>
-        Çmimi për ditë:
-        €<?php echo htmlspecialchars($car['price_per_day']); ?>
-    </p>
+        <!-- FOTOGRAFIA -->
 
-    <?php if ($error != ""): ?>
+        <?php if (!empty($car['image'])): ?>
 
-        <p style="color:red;">
-            <?php echo htmlspecialchars($error); ?>
-        </p>
+            <img
+                src="<?php echo htmlspecialchars($car['image']); ?>"
+                alt="<?php echo htmlspecialchars($car['brand'] . ' ' . $car['model']); ?>"
+                style="width:100%; height:350px; object-fit:cover;"
+            >
 
-    <?php endif; ?>
+        <?php else: ?>
 
-    <form method="POST" class="car-form">
+            <div class="car-image-placeholder">
+                No Image Available
+            </div>
 
-        <label>Data e marrjes:</label>
+        <?php endif; ?>
 
-        <input
-            type="date"
-            name="start_date"
-            min="<?php echo date('Y-m-d'); ?>"
-            required
-        >
+        <div class="car-info">
 
-        <label>Data e kthimit:</label>
+            <!-- TE DHENAT E VETURES -->
 
-        <input
-            type="date"
-            name="end_date"
-            min="<?php echo date('Y-m-d'); ?>"
-            required
-        >
+            <h2>
+                <?php echo htmlspecialchars($car['brand'] . " " . $car['model']); ?>
+            </h2>
 
-        <button type="submit" class="btn">
-            Konfirmo rezervimin
-        </button>
+            <p>
+                <strong>Year:</strong>
+                <?php echo htmlspecialchars($car['year']); ?>
+            </p>
 
-    </form>
+            <p>
+                <strong>Color:</strong>
+                <?php echo htmlspecialchars($car['color'] ?? "Not specified"); ?>
+            </p>
+
+            <p>
+                <strong>Description:</strong>
+                <?php echo htmlspecialchars($car['description'] ?? "No description available."); ?>
+            </p>
+
+            <div class="price">
+                €<?php echo number_format($car['price_per_day'], 2); ?> / Day
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FORMULARI I REZERVIMIT -->
+
+    <div class="admin-info" style="max-width:800px; margin:30px auto;">
+
+        <h2>Book This Car</h2>
+
+        <p>Select your rental dates below.</p>
+
+        <?php if ($error != ""): ?>
+
+            <p class="form-error">
+                <?php echo htmlspecialchars($error); ?>
+            </p>
+
+        <?php endif; ?>
+
+        <form method="POST" class="car-form">
+
+            <label>Pickup Date:</label>
+
+            <input
+                type="date"
+                name="start_date"
+                min="<?php echo date('Y-m-d'); ?>"
+                value="<?php echo htmlspecialchars($_POST['start_date'] ?? ''); ?>"
+                required
+            >
+
+            <label>Return Date:</label>
+
+            <input
+                type="date"
+                name="end_date"
+                min="<?php echo date('Y-m-d'); ?>"
+                value="<?php echo htmlspecialchars($_POST['end_date'] ?? ''); ?>"
+                required
+            >
+
+            <button type="submit" class="btn">
+                Rent This Car
+            </button>
+
+            <a href="index.php#cars" class="cancel-link">
+                Back to Cars
+            </a>
+
+        </form>
+
+    </div>
 
 </div>
 

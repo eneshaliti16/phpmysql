@@ -36,35 +36,102 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $price = (float) $_POST["price"];
     $description = trim($_POST["description"]);
 
+    // Ruajme fotografine ekzistuese
+    $image = $car["image"];
+
     if ($brand == "" || $model == "" || $year <= 0 || $price <= 0) {
 
         $message = "Please fill in all required fields correctly!";
 
     } else {
 
-        $sql = "UPDATE cars SET
-                brand = ?,
-                model = ?,
-                year = ?,
-                color = ?,
-                price_per_day = ?,
-                description = ?
-                WHERE id = ?";
+        // Kontrollojme nese eshte zgjedhur fotografi e re
+        if (isset($_FILES["image"]) && $_FILES["image"]["error"] !== UPLOAD_ERR_NO_FILE) {
 
-        $stmt = $conn->prepare($sql);
+            if ($_FILES["image"]["error"] !== UPLOAD_ERR_OK) {
 
-        $stmt->execute([
-            $brand,
-            $model,
-            $year,
-            $color,
-            $price,
-            $description,
-            $id
-        ]);
+                $message = "Error uploading image!";
 
-        header("Location: cars.php");
-        exit();
+            } elseif ($_FILES["image"]["size"] > 5 * 1024 * 1024) {
+
+                $message = "Image must be smaller than 5MB!";
+
+            } else {
+
+                $finfo = new finfo(FILEINFO_MIME_TYPE);
+                $mime = $finfo->file($_FILES["image"]["tmp_name"]);
+
+                $allowed = [
+                    "image/jpeg" => "jpg",
+                    "image/png" => "png",
+                    "image/webp" => "webp"
+                ];
+
+                if (!isset($allowed[$mime])) {
+
+                    $message = "Only JPG, PNG and WEBP images are allowed!";
+
+                } else {
+
+                    $upload_dir = __DIR__ . "/../assets/images/";
+
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0775, true);
+                    }
+
+                    if (!is_writable($upload_dir)) {
+
+                        $message = "Images folder is not writable!";
+
+                    } else {
+
+                        $filename = bin2hex(random_bytes(16)) . "." . $allowed[$mime];
+
+                        $upload_path = $upload_dir . $filename;
+
+                        if (move_uploaded_file($_FILES["image"]["tmp_name"], $upload_path)) {
+
+                            $image = "assets/images/" . $filename;
+
+                        } else {
+
+                            $message = "Could not upload the new image!";
+
+                        }
+                    }
+                }
+            }
+        }
+
+        // Ruajme ndryshimet ne databaze
+        if ($message == "") {
+
+            $sql = "UPDATE cars SET
+                    brand = ?,
+                    model = ?,
+                    year = ?,
+                    color = ?,
+                    price_per_day = ?,
+                    description = ?,
+                    image = ?
+                    WHERE id = ?";
+
+            $stmt = $conn->prepare($sql);
+
+            $stmt->execute([
+                $brand,
+                $model,
+                $year,
+                $color,
+                $price,
+                $description,
+                $image,
+                $id
+            ]);
+
+            header("Location: cars.php");
+            exit();
+        }
     }
 }
 ?>
@@ -120,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </p>
             <?php endif; ?>
 
-            <form method="POST" class="car-form">
+            <form method="POST" class="car-form" enctype="multipart/form-data">
 
                 <label>Brand *</label>
                 <input type="text" name="brand"
@@ -146,6 +213,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <textarea name="description" rows="5"><?php
                     echo htmlspecialchars($car["description"] ?? "");
                 ?></textarea>
+
+                <label>Current Image</label>
+
+                <?php if (!empty($car["image"])): ?>
+                    <img src="../<?php echo htmlspecialchars($car["image"]); ?>"
+                         alt="Car Image"
+                         style="width:200px; height:130px; object-fit:cover; border-radius:10px; margin:10px 0;">
+                <?php else: ?>
+                    <p>No image available.</p>
+                <?php endif; ?>
+
+                <label>Choose New Image (optional)</label>
+                <input type="file" name="image"
+                    accept="image/jpeg,image/png,image/webp">
 
                 <button type="submit" class="btn">
                     Update Car

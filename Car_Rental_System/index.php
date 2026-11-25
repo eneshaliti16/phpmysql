@@ -1,5 +1,32 @@
 
 <?php
+require_once "includes/config.php";
+
+// Marrim vlerat nga formulari i kerkimit
+$search = trim($_GET["search"] ?? "");
+$max_price = $_GET["max_price"] ?? "";
+
+// Ndertojme kerkesen SQL
+$sql = "SELECT * FROM cars WHERE status = 'available'";
+$params = [];
+
+if ($search != "") {
+    $sql .= " AND (brand LIKE ? OR model LIKE ?)";
+    $params[] = "%" . $search . "%";
+    $params[] = "%" . $search . "%";
+}
+
+if ($max_price != "" && is_numeric($max_price) && $max_price > 0) {
+    $sql .= " AND price_per_day <= ?";
+    $params[] = (float) $max_price;
+}
+
+$sql .= " ORDER BY id DESC";
+
+$stmt = $conn->prepare($sql);
+$stmt->execute($params);
+$cars = $stmt->fetchAll();
+
 include "includes/header.php";
 ?>
 
@@ -34,97 +61,105 @@ include "includes/header.php";
 <section class="cars-section" id="cars">
 
     <h2 class="section-title">
-        Our Popular Cars
+        Our Available Cars
     </h2>
 
     <p class="section-description">
         Choose the perfect car for your next journey.
     </p>
 
+    <!-- SEARCH FORM -->
+
+    <form method="GET" action="index.php" class="car-form">
+
+        <label>Search Brand or Model</label>
+
+        <input
+            type="text"
+            name="search"
+            placeholder="Example: Audi, BMW, Golf..."
+            value="<?php echo htmlspecialchars($search); ?>"
+        >
+
+        <label>Maximum Price Per Day (€)</label>
+
+        <input
+            type="number"
+            name="max_price"
+            min="1"
+            step="0.01"
+            placeholder="Example: 50"
+            value="<?php echo htmlspecialchars($max_price); ?>"
+        >
+
+        <button type="submit" class="btn">
+            Search Cars
+        </button>
+
+        <a href="index.php" class="cancel-link">
+            Reset Filters
+        </a>
+
+    </form>
+
+
     <div class="cars-container">
 
-        <!-- CAR 1 -->
+        <?php if (count($cars) > 0): ?>
 
-        <div class="car-card">
+            <?php foreach ($cars as $car): ?>
 
-            <img
-                src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7"
-                alt="BMW Car"
-            >
+                <div class="car-card">
 
-            <div class="car-info">
+                    <?php if (!empty($car['image'])): ?>
 
-                <h3>BMW Series 5</h3>
+                        <img
+                            src="<?php echo htmlspecialchars($car['image']); ?>"
+                            alt="<?php echo htmlspecialchars($car['brand'] . ' ' . $car['model']); ?>"
+                        >
 
-                <p>Automatic | Diesel | 2022</p>
+                    <?php else: ?>
 
-                <div class="price">
-                    €65 / Day
+                        <div class="car-image-placeholder">
+                            No Image Available
+                        </div>
+
+                    <?php endif; ?>
+
+                    <div class="car-info">
+
+                        <h3>
+                            <?php echo htmlspecialchars($car['brand'] . " " . $car['model']); ?>
+                        </h3>
+
+                        <p>
+                            <?php echo htmlspecialchars($car['color'] ?? ""); ?>
+                            |
+                            <?php echo htmlspecialchars($car['year']); ?>
+                        </p>
+
+                        <div class="price">
+                            €<?php echo number_format($car['price_per_day'], 2); ?> / Day
+                        </div>
+
+                        <a
+                            href="rent.php?id=<?php echo (int)$car['id']; ?>"
+                            class="btn"
+                        >
+                            Rent Now
+                        </a>
+
+                    </div>
+
                 </div>
 
-                <a href="login.php" class="btn">
-                    Rent Now
-                </a>
+            <?php endforeach; ?>
 
-            </div>
+        <?php else: ?>
 
-        </div>
+            <p>No cars found. Try different search filters.</p>
 
-
-        <!-- CAR 2 -->
-
-        <div class="car-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1503376780353-7e6692767b70"
-                alt="Porsche Car"
-            >
-
-            <div class="car-info">
-
-                <h3>Porsche 911</h3>
-
-                <p>Automatic | Petrol | 2023</p>
-
-                <div class="price">
-                    €120 / Day
-                </div>
-
-                <a href="login.php" class="btn">
-                    Rent Now
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <!-- CAR 3 -->
-
-        <div class="car-card">
-
-            <img
-                src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d"
-                alt="Chevrolet Car"
-            >
-
-            <div class="car-info">
-
-                <h3>Chevrolet Camaro</h3>
-
-                <p>Automatic | Petrol | 2022</p>
-
-                <div class="price">
-                    €90 / Day
-                </div>
-
-                <a href="login.php" class="btn">
-                    Rent Now
-                </a>
-
-            </div>
-
-        </div>
+        <?php endif; ?>
 
     </div>
 
@@ -149,6 +184,4 @@ include "includes/header.php";
 </section>
 
 
-<?php
-include "includes/footer.php";
-?>
+<?php include "includes/footer.php"; ?>

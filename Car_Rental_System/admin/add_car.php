@@ -20,29 +20,88 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $price = (float) $_POST["price"];
     $description = trim($_POST["description"]);
 
+    $image = "";
+
     if ($brand == "" || $model == "" || $year <= 0 || $price <= 0) {
 
         $message = "Please fill in all required fields correctly!";
 
     } else {
 
-        $sql = "INSERT INTO cars
-                (brand, model, year, color, price_per_day, description)
-                VALUES (?, ?, ?, ?, ?, ?)";
+        // Kontrollojme nese eshte zgjedhur fotografia
+        if (isset($_FILES["image"]) && $_FILES["image"]["error"] != UPLOAD_ERR_NO_FILE) {
 
-        $stmt = $conn->prepare($sql);
+            if ($_FILES["image"]["error"] != UPLOAD_ERR_OK) {
 
-        $stmt->execute([
-            $brand,
-            $model,
-            $year,
-            $color,
-            $price,
-            $description
-        ]);
+                $message = "There was a problem uploading the image!";
 
-        header("Location: cars.php");
-        exit();
+            } elseif ($_FILES["image"]["size"] > 5 * 1024 * 1024) {
+
+                $message = "Image must be smaller than 5 MB!";
+
+            } else {
+
+                // Kontrollojme llojin e fotografise
+                $finfo = new finfo(FILEINFO_MIME_TYPE);
+                $mime = $finfo->file($_FILES["image"]["tmp_name"]);
+
+                $allowed_types = [
+                    "image/jpeg" => "jpg",
+                    "image/png" => "png",
+                    "image/webp" => "webp"
+                ];
+
+                if (!isset($allowed_types[$mime])) {
+
+                    $message = "Only JPG, PNG and WEBP images are allowed!";
+
+                } else {
+
+                    $extension = $allowed_types[$mime];
+
+                    $filename = bin2hex(random_bytes(16)) . "." . $extension;
+
+                    $upload_dir = __DIR__ . "/../assets/images/";
+
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0775, true);
+                    }
+
+                    $upload_path = $upload_dir . $filename;
+
+                    if (move_uploaded_file($_FILES["image"]["tmp_name"], $upload_path)) {
+
+                        $image = "assets/images/" . $filename;
+
+                    } else {
+
+                        $message = "Could not save the image!";
+                    }
+                }
+            }
+        }
+
+        if ($message == "") {
+
+            $sql = "INSERT INTO cars
+                    (brand, model, year, color, price_per_day, description, image)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+            $stmt = $conn->prepare($sql);
+
+            $stmt->execute([
+                $brand,
+                $model,
+                $year,
+                $color,
+                $price,
+                $description,
+                $image
+            ]);
+
+            header("Location: cars.php");
+            exit();
+        }
     }
 }
 ?>
@@ -53,6 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Add New Car - CarRent</title>
 
     <link rel="stylesheet" href="../assets/css/style.css">
@@ -98,7 +158,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </p>
             <?php endif; ?>
 
-            <form method="POST" class="car-form">
+            <form method="POST"
+                  enctype="multipart/form-data"
+                  class="car-form">
 
                 <label>Brand *</label>
                 <input type="text" name="brand"
@@ -124,6 +186,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <textarea name="description"
                           rows="5"
                           placeholder="Write car description..."></textarea>
+
+                <label>Car Image</label>
+                <input type="file"
+                       name="image"
+                       accept="image/jpeg,image/png,image/webp">
+
+                <p class="image-help">
+                    Allowed formats: JPG, PNG, WEBP. Maximum size: 5 MB.
+                </p>
 
                 <button type="submit" class="btn">
                     Save Car

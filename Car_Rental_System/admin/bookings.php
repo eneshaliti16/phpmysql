@@ -11,6 +11,8 @@ if (!isset($_SESSION["user_id"]) || $_SESSION["role"] !== "admin") {
 }
 
 // Ndryshimi i statusit te rezervimit
+
+// Ndryshimi i statusit te rezervimit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $booking_id = (int) $_POST["booking_id"];
@@ -18,14 +20,77 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (in_array($status, ["approved", "rejected"])) {
 
-        $sql = "UPDATE bookings SET status = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$status, $booking_id]);
+        // Marrim rezervimin qe duam te ndryshojme
+        $stmt = $conn->prepare("
+            SELECT * FROM bookings
+            WHERE id = ? AND status = 'pending'
+        ");
+
+        $stmt->execute([$booking_id]);
+        $booking = $stmt->fetch();
+
+        if ($booking) {
+
+            // Kontrollojme nese vetura ka rezervim tjeter te aprovuar
+            if ($status == "approved") {
+
+                $check = $conn->prepare("
+                    SELECT COUNT(*) FROM bookings
+                    WHERE car_id = ?
+                    AND id != ?
+                    AND status = 'approved'
+                    AND start_date <= ?
+                    AND end_date >= ?
+                ");
+
+                $check->execute([
+                    $booking["car_id"],
+                    $booking_id,
+                    $booking["end_date"],
+                    $booking["start_date"]
+                ]);
+
+                $conflict = $check->fetchColumn();
+
+                if ($conflict > 0) {
+
+                    $_SESSION["booking_message"] =
+                        "This car already has an approved booking for these dates!";
+
+                } else {
+
+                    $update = $conn->prepare("
+                        UPDATE bookings
+                        SET status = 'approved'
+                        WHERE id = ?
+                    ");
+
+                    $update->execute([$booking_id]);
+
+                    $_SESSION["booking_message"] =
+                        "Booking approved successfully!";
+                }
+
+            } else {
+
+                $update = $conn->prepare("
+                    UPDATE bookings
+                    SET status = 'rejected'
+                    WHERE id = ?
+                ");
+
+                $update->execute([$booking_id]);
+
+                $_SESSION["booking_message"] =
+                    "Booking rejected successfully!";
+            }
+        }
     }
 
     header("Location: bookings.php");
     exit();
 }
+
 
 // Marrja e rezervimeve nga databaza
 $sql = "SELECT
@@ -114,6 +179,17 @@ $bookings = $stmt->fetchAll();
         <div class="admin-info">
 
             <h2>All Bookings</h2>
+
+                        <?php if (isset($_SESSION["booking_message"])): ?>
+                        
+                                <p class="booking-message">
+                                    <?php
+                                    echo htmlspecialchars($_SESSION["booking_message"]);
+                                    unset($_SESSION["booking_message"]);
+                                    ?>
+                                </p>
+                        
+                        <?php endif; ?>
 
             <p>Total Bookings: <?php echo count($bookings); ?></p>
 
